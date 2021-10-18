@@ -2,13 +2,12 @@
 import argparse
 import logging
 import os
-from http.server import HTTPServer
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from typing import Any
 
 import argcomplete
 
 import api
-from _temp.api import MainHTTPHandler
 from api.configurator import Conf
 from api.logger import log_format
 from api.logger import logger
@@ -53,7 +52,7 @@ def run_() -> None:
         fh.setFormatter(log_format)
         logger.addHandler(fh)
 
-    server = HTTPServer(("localhost", args.port), MainHTTPHandler)
+    server = HTTPServer(("localhost", args.port), BaseHTTPRequestHandler)
     logger.info("Starting server at %s" % args.port)
     try:
         server.serve_forever()

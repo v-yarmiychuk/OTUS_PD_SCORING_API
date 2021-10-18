@@ -11,6 +11,7 @@ setup(
     author_email='v.yarmiychuk@gmail.com',
     description='Python Developer Professional  Scoring API',
     install_requires=[
+        'PyYAML',
         'argcomplete',
     ],
     entry_points={
