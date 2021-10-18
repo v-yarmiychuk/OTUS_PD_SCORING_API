@@ -1,0 +1,16 @@
+### IDE ###
+/.idea/
+/.vscode/
+.vimrc
+
+### Virtual Env ###
+/venv/
+
+### CACHE ###
+*.egg-info/
+*.egg
+*.log
+
+### TEMP ###
+/_temp/
+
