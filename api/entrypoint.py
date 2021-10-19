@@ -2,12 +2,13 @@
 import argparse
 import logging
 import os
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import HTTPServer
 from typing import Any
 
 import argcomplete
 
 import api
+from api.handler import MainHandler
 from api.configurator import Conf
 from api.logger import log_format
 from api.logger import logger
@@ -18,14 +19,18 @@ class Arguments:
         self.parser = argparse.ArgumentParser(
             description='training log parser')
         self.parser.add_argument(
-            '-p',
-            '--port',
-            required=False,
-            default=8080,
-            type=int,
-            help='The port on which the web server will listen, by default 8080'
+            "-l",
+            "--listen",
+            default="localhost",
+            help="Specify the IP address on which the server listens",
         )
-
+        self.parser.add_argument(
+            "-p",
+            "--port",
+            type=int,
+            default=8000,
+            help="Specify the port on which the server listens",
+        )
         self.parser.add_argument(
             '--config',
             required=False,
@@ -52,13 +57,16 @@ def run_() -> None:
         fh.setFormatter(log_format)
         logger.addHandler(fh)
 
-    server = HTTPServer(("localhost", args.port), BaseHTTPRequestHandler)
-    logger.info("Starting server at %s" % args.port)
+    server = HTTPServer((args.listen, args.port), MainHandler)
+    logger.info(f'Starting server at http://{args.listen}:{args.port}')
+
     try:
         server.serve_forever()
     except KeyboardInterrupt:
         pass
+
     server.server_close()
+    logger.info(f'Closing server.')
 
 
 def run() -> None:
