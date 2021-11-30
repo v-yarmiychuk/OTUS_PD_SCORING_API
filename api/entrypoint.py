@@ -1,15 +1,14 @@
-# PYTHON_ARGCOMPLETE_OK
 import argparse
 import logging
 import os
 from http.server import HTTPServer
-from typing import Any
+from typing import Any, Tuple
 
 import argcomplete
 
 import api
-from api.handler import MainHandler
 from api.configurator import Conf
+from api.handler import MainHandler
 from api.logger import log_format
 from api.logger import logger
 
@@ -47,6 +46,15 @@ class Arguments:
         return self.args
 
 
+class ConfHTTPServer(HTTPServer):
+    def __init__(self, *args, additional_conf: Conf, **kwargs) -> None:
+        self.additional_conf = additional_conf
+        super().__init__(*args, **kwargs)
+
+    def finish_request(self, request: bytes, client_address: Tuple[str, int]) -> None:
+        self.RequestHandlerClass(request, client_address, self, additional_conf=self.additional_conf)
+
+
 def run_() -> None:
     os.chdir(os.path.join(os.path.dirname(api.__file__), os.path.pardir))
     args = Arguments().parse()
@@ -57,8 +65,8 @@ def run_() -> None:
         fh.setFormatter(log_format)
         logger.addHandler(fh)
 
-    server = HTTPServer((args.listen, args.port), MainHandler)
-    logger.info(f'Starting server at http://{args.listen}:{args.port}')
+    server = ConfHTTPServer((args.listen, args.port), MainHandler, additional_conf=conf)
+    logger.info(f'Starting server at {args.listen}:{args.port}')
 
     try:
         server.serve_forever()
@@ -73,5 +81,8 @@ def run() -> None:
     try:
         run_()
     except BaseException as e:
-        logger.exception(e)
         raise e
+
+
+if __name__ == '__main__':
+    run()

@@ -1,0 +1,66 @@
+#### Send POST request with json body
+#POST http://localhost:8000/method/
+#Content-Type: application/json
+#
+#{
+#  "account": "ferryman Co",
+#  "login": "ferryman",
+#  "token": "8f537e900704f964a122136cedfa968f1ea23c0aa336a4d6fca661f2ac51ca94f538a632540c973c537b5c2325a2cb168a81630cb503d33411d9250559e4cb09",
+#  "method": "test",
+#  "arguments": {}
+#}
+#
+#
+#### Send POST request with json body
+#POST http://localhost:8000/method/
+#Content-Type: application/json
+#
+#{
+#  "account": "ferryman Co",
+#  "login": "charon",
+#  "token": "3ff20ca80ac7b328ec7d7a5c19ea67899943355e6cc86d10dd37958ca86e3e061d1c69d6b25781a137f1fd045d22e0c454bbcf5edb72b520c9fc19e4180b0592",
+#  "method": "online_score",
+#  "arguments": {
+#    "phone": "79175002040",
+#    "email": "stupnikov@otus.ru",
+#    "first_name": "Стансилав",
+#    "last_name": "Ступников",
+#    "birthday": "01.01.1990",
+#    "gender": 1
+#  }
+#}
+#
+#### Send POST request with json body
+#POST http://localhost:8000/method/
+#Content-Type: application/json
+#
+#{
+#  "token": "3ff20ca80ac7b328ec7d7a5c19ea67899943355e6cc86d10dd37958ca86e3e061d1c69d6b25781a137f1fd045d22e0c454bbcf5edb72b520c9fc19e4180b0592",
+#  "account": "ferryman Co",
+#  "login": "charon",
+#  "method": "clients_interests",
+#  "arguments":  {
+#    "client_ids": [1, 2],
+#    "date": "19.07.2017"
+#  }
+#}
+
+### Send POST request with json body
+POST http://localhost:8000/method/
+Content-Type: application/json
+
+{
+  "account": "ferryman Co"
+}
+
+### Send POST request with json body
+POST http://localhost:8000/method/
+Content-Type: application/json
+
+{}
+
+### Send POST request with json body
+POST http://localhost:8000/method/
+Content-Type: application/json
+
+{}

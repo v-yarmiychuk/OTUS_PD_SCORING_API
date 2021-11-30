@@ -1,1 +1,13 @@
 log_file_path: './scoring_api.log'
+salt: 'charon'
+admin_login: 'ferryman'
+admin_salt: 42
+
+
+#http:
+HTTP_200_OK: 200
+HTTP_400_BAD_REQUEST: 400
+HTTP_403_FORBIDDEN: 403
+HTTP_404_NOT_FOUND: 404
+HTTP_422_UNPROCESSABLE_ENTITY: 422
+HTTP_500_INT_SERV_ERROR: 500

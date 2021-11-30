@@ -10,7 +10,7 @@ class Conf:
     config = {}
     default_config_path = 'configs/default_config.yaml'
 
-    def __init__(self, stream: Optional[TextIO]) -> None:
+    def __init__(self, stream: Optional[TextIO] = None) -> None:
         self.logger = logging.getLogger(f'log_analyzer.Conf')
 
         with open(Conf.default_config_path, 'r') as f:
