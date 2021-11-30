@@ -86,7 +86,7 @@ class ArgumentsField(BaseField):
 
 
 class EmailField(CharField):
-    EMAIL_REGEX = re.compile(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$")
+    EMAIL_REGEX = re.compile(r"^[A-Za-z0-9.+_-]+@[A-Za-z0-9._-]+\.[a-zA-Z]*$")
 
     def _validate_mask(self, name: str, data: Any) -> Tuple[bool, List[str]]:
         if self.EMAIL_REGEX.match(data):
