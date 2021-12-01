@@ -1,4 +1,5 @@
 import hashlib
+import json
 import random
 from typing import Any
 from typing import Dict
@@ -11,6 +12,7 @@ from api.configurator import Conf
 from api.method.validators import ClientsInterestsValidator
 from api.method.validators import MethodValidator
 from api.method.validators import OnlineScoreValidator
+from api.store import KVStore
 
 
 class MethodView(BaseView):
@@ -19,6 +21,7 @@ class MethodView(BaseView):
             'online_score': self.method_online_score,
             'clients_interests': self.method_clients_interests
         }
+        self.store = KVStore(conf)
         super().__init__(conf)
 
     def post(self, request: Dict) -> Tuple[int, Any, List[str]]:
@@ -76,13 +79,26 @@ class MethodView(BaseView):
         if not status:
             return self.conf.HTTP_422_UNPROCESSABLE_ENTITY, None, errors
 
-        result = {client: self.get_interests() for client in arguments.get('client_ids')}
+        result = {client: self.get_interests(client) for client in arguments.get('client_ids')}
 
         return self.conf.HTTP_200_OK, result, None
 
-    @staticmethod
-    def get_score(phone=None, email=None, birthday=None, gender=None, first_name=None, last_name=None) -> float:
-        score = 0
+    def get_score(self, phone=None, email=None, birthday=None, gender=None, first_name=None, last_name=None):
+        key_parts = [
+            first_name or '',
+            last_name or '',
+            phone or '',
+            birthday if birthday is not None else '',
+        ]
+        key_parts = [str(item) for item in key_parts]
+        line = ''.join(key_parts).encode('utf-8')
+        key = 'uid:' + hashlib.md5(line).hexdigest()
+
+        score = self.store[key] or 0
+
+        if score:
+            return float(score)
+
         if phone:
             score += 1.5
         if email:
@@ -91,9 +107,19 @@ class MethodView(BaseView):
             score += 1.5
         if first_name and last_name:
             score += 0.5
+
+        self.store.set(key, score, 60 * 60)
         return score
 
-    @staticmethod
-    def get_interests():
-        interests = ["cars", "pets", "travel", "hi-tech", "sport", "music", "books", "tv", "cinema", "geek", "otus"]
-        return random.sample(interests, 2)
+    def get_interests(self, cid: int) -> List[str]:
+        interests = ['cars', 'pets', 'travel', 'hi-tech', 'sport', 'music', 'books', 'tv', 'cinema', 'geek', 'otus']
+        key = f'i:{cid}'
+        val = self.store.get(key)
+
+        if val is None:
+            val = random.sample(interests, 2)
+            self.store.set(key, json.dumps(val), 60 * 60)
+        else:
+            val = json.loads(val)
+
+        return val

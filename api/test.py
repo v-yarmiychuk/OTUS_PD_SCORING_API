@@ -80,7 +80,7 @@ class TestSuite(unittest.TestCase):
         request = {"account": "horns&hoofs", "login": "h&f", "method": "online_score", "arguments": arguments}
         self.set_valid_auth(request)
         code, response, errors = self.get_response(request)
-        self.assertEqual(self.conf.HTTP_422_UNPROCESSABLE_ENTITY, code, arguments)
+        self.assertEqual(self.conf.HTTP_422_UNPROCESSABLE_ENTITY, code, (arguments, errors))
         self.assertTrue(len(errors))
 
     @cases([
@@ -100,7 +100,7 @@ class TestSuite(unittest.TestCase):
         code, response, errors = self.get_response(request)
         self.assertEqual(self.conf.HTTP_200_OK, code, (request, errors))
         score = response.get("score")
-        self.assertTrue(isinstance(score, (int, float)) and score >= 0, arguments)
+        self.assertTrue(isinstance(score, (int, float)) and score >= 0, (arguments, score, errors))
 
     def test_ok_score_admin_request(self):
         arguments = {"phone": "79175002040", "email": "stupnikov@otus.ru"}
@@ -139,7 +139,7 @@ class TestSuite(unittest.TestCase):
         request = {"account": "horns&hoofs", "login": "h&f", "method": "clients_interests", "arguments": arguments}
         self.set_valid_auth(request)
         code, response, errors = self.get_response(request)
-        self.assertEqual(self.conf.HTTP_422_UNPROCESSABLE_ENTITY, code, arguments)
+        self.assertEqual(self.conf.HTTP_422_UNPROCESSABLE_ENTITY, code, (arguments, errors))
         self.assertTrue(len(errors))
 
 

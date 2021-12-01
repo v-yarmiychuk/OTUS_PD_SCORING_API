@@ -13,6 +13,7 @@ setup(
     install_requires=[
         'PyYAML',
         'argcomplete',
+        'redis'
     ],
     entry_points={
         'console_scripts': [

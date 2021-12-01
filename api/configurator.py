@@ -11,7 +11,7 @@ class Conf:
     default_config_path = 'configs/default_config.yaml'
 
     def __init__(self, stream: Optional[TextIO] = None) -> None:
-        self.logger = logging.getLogger(f'log_analyzer.Conf')
+        self.logger = logging.getLogger(f'scoring_api.Conf')
 
         with open(Conf.default_config_path, 'r') as f:
             self._load_config(f, default=True)
