@@ -94,18 +94,13 @@ class KVStore:
         return val
 
     def set(self, key, val, ex: Union[int, None] = None):
-        self.server.set(name=key, value=val, ex=ex)
+        try:
+            self.server.set(name=key, value=val, ex=ex)
+        except redis.exceptions.ConnectionError as e:
+            self.logger.error(f"Redis connection - ConnectionError {e}")
 
     def __getitem__(self, key) -> Any:
         return self.get(key)
 
     def __setitem__(self, key, val):
         self.set(key, val)
-
-
-if __name__ == '__main__':
-    store = KVStore()
-    store.set('test:1', 'asdasdf')
-    store.set('test:2', 1)
-    for key in store.server.scan_iter("*"):
-        print(type(store.get(key)))

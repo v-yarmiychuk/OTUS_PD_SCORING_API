@@ -144,5 +144,5 @@ class TestSuite(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    os.chdir(os.path.join(os.path.dirname(api.__file__), os.path.pardir))
+    os.chdir(os.path.join(os.path.dirname(api.__file__), os.path.pardir, os.path.pardir))
     unittest.main()

@@ -19,6 +19,13 @@ source ./env/bin/activate
 pip3 install -e . 
 ```
 
+## Testing
+
+```bash
+python -m unittest discover
+```
+
+
 ## Usage
 
 ```bash

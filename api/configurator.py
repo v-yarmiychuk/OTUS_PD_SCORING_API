@@ -1,4 +1,5 @@
 import logging.config
+import os
 from typing import Any
 from typing import Optional
 from typing import TextIO
@@ -13,7 +14,12 @@ class Conf:
     def __init__(self, stream: Optional[TextIO] = None) -> None:
         self.logger = logging.getLogger(f'scoring_api.Conf')
 
-        with open(Conf.default_config_path, 'r') as f:
+        path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            os.path.pardir,
+            Conf.default_config_path
+        )
+        with open(path, 'r') as f:
             self._load_config(f, default=True)
 
         if stream:
