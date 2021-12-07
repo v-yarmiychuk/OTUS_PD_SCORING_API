@@ -1,6 +1,7 @@
 import hashlib
 import json
 import random
+from http import HTTPStatus
 from typing import Any
 from typing import Dict
 from typing import List
@@ -27,10 +28,10 @@ class MethodView(BaseView):
     def post(self, request: Dict) -> Tuple[int, Any, List[str]]:
         status, errors = MethodValidator(conf=self.conf).validate(request)
         if not status:
-            return self.conf.HTTP_422_UNPROCESSABLE_ENTITY, None, errors
+            return HTTPStatus.UNPROCESSABLE_ENTITY, None, errors
 
         if not self.check_auth(request):
-            return self.conf.HTTP_403_FORBIDDEN, None, ['Forbidden']
+            return HTTPStatus.FORBIDDEN, None, ['Forbidden']
 
         handler = self.methods_handlers.get(request.get('method', ''), None)
 
@@ -38,7 +39,7 @@ class MethodView(BaseView):
             # noinspection PyArgumentList
             return handler(data=request)
         else:
-            return self.conf.HTTP_422_UNPROCESSABLE_ENTITY, None, ['the requested method is not defined']
+            return HTTPStatus.UNPROCESSABLE_ENTITY, None, ['the requested method is not defined']
 
     def check_auth(self, request: Dict) -> bool:
         account = request.get('account', '')
@@ -63,25 +64,25 @@ class MethodView(BaseView):
         status, errors = OnlineScoreValidator(conf=self.conf).validate(arguments)
 
         if not status:
-            return self.conf.HTTP_422_UNPROCESSABLE_ENTITY, None, errors
+            return HTTPStatus.UNPROCESSABLE_ENTITY, None, errors
 
         if data.get('login', '') == self.conf.admin_login:
             score = 42
         else:
             score = self.get_score(**arguments)
 
-        return self.conf.HTTP_200_OK, {'score': score}, None
+        return HTTPStatus.OK, {'score': score}, None
 
     def method_clients_interests(self, data: Dict) -> Tuple[int, Any, Union[List[str], None]]:
         arguments = data.get('arguments', {})
         status, errors = ClientsInterestsValidator(conf=self.conf).validate(arguments)
 
         if not status:
-            return self.conf.HTTP_422_UNPROCESSABLE_ENTITY, None, errors
+            return HTTPStatus.UNPROCESSABLE_ENTITY, None, errors
 
         result = {client: self.get_interests(client) for client in arguments.get('client_ids')}
 
-        return self.conf.HTTP_200_OK, result, None
+        return HTTPStatus.OK, result, None
 
     def get_score(self, phone=None, email=None, birthday=None, gender=None, first_name=None, last_name=None):
         key_parts = [

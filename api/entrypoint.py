@@ -2,7 +2,8 @@ import argparse
 import logging
 import os
 from http.server import HTTPServer
-from typing import Any, Tuple
+from typing import Any
+from typing import Tuple
 
 import argcomplete
 
@@ -47,12 +48,12 @@ class Arguments:
 
 
 class ConfHTTPServer(HTTPServer):
-    def __init__(self, *args, additional_conf: Conf, **kwargs) -> None:
-        self.additional_conf = additional_conf
+    def __init__(self, *args, conf: Conf, **kwargs) -> None:
+        self.conf = conf
         super().__init__(*args, **kwargs)
 
     def finish_request(self, request: bytes, client_address: Tuple[str, int]) -> None:
-        self.RequestHandlerClass(request, client_address, self, additional_conf=self.additional_conf)
+        self.RequestHandlerClass(request, client_address, self, conf=self.conf)
 
 
 def run_() -> None:
@@ -65,7 +66,7 @@ def run_() -> None:
         fh.setFormatter(log_format)
         logger.addHandler(fh)
 
-    server = ConfHTTPServer((args.listen, args.port), MainHandler, additional_conf=conf)
+    server = ConfHTTPServer((args.listen, args.port), MainHandler, conf=conf)
     logger.info(f'Starting server at {args.listen}:{args.port}')
 
     try:
@@ -81,6 +82,7 @@ def run() -> None:
     try:
         run_()
     except BaseException as e:
+        logger.error(f'Raised base exception {e}')
         raise e
 
 

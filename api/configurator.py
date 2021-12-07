@@ -11,24 +11,30 @@ class Conf:
     config = {}
     default_config_path = 'configs/default_config.yaml'
 
-    def __init__(self, stream: Optional[TextIO] = None) -> None:
-        self.logger = logging.getLogger(f'scoring_api.Conf')
+    def __init__(self, stream: Optional[TextIO] = None, load_def_conf: bool = True, ) -> None:
 
+        self.logger = logging.getLogger(f'scoring_api.Conf')
+        self.load_def_conf = load_def_conf
+
+        if load_def_conf:
+            self._load_default_config()
+
+        if stream:
+            self._load_config(stream, force=False if load_def_conf else True)
+
+    def _load_default_config(self) -> None:
         path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             os.path.pardir,
             Conf.default_config_path
         )
         with open(path, 'r') as f:
-            self._load_config(f, default=True)
+            self._load_config(f, force=True)
 
-        if stream:
-            self._load_config(stream)
-
-    def _load_config(self, stream: TextIO, default: bool = False) -> None:
+    def _load_config(self, stream: TextIO, force: bool = False) -> None:
         data = yaml.safe_load(stream)
         for key, value in data.items():
-            if default:
+            if force:
                 self.config[key] = value
             else:
                 if key not in self.config:
@@ -39,8 +45,8 @@ class Conf:
                 self.logger.info(f'Applying a configuration parameter: {key}: {value}')
                 self.config[key] = value
 
-    def __getattribute__(self, name: str) -> Any:
+    def __getattr__(self, name: str) -> Any:
         if name in Conf.config.keys():
             return self.config[name]
         else:
-            return object.__getattribute__(self, name)
+            raise AttributeError(f'Attribute "{name}" was not defined.')
